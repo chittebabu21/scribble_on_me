@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./paintbrush_favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./paintbrush_favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./paintbrush_favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./paintbrush_favicon/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap"
+      rel="stylesheet"
+    />
+    <title>Scribble On Me!</title>
+  </head>
+  <body>
+    <style>
+      .header {
+        width: 100vw;
+        padding: 9px 0 5px 0;
+        display: flex;
+        justify-content: center;
+        background: black;
+        color: azure;
+        font-size: 1rem;
+        letter-spacing: 0.5rem;
+        /* border: 1px solid red; */
+      }
+      .drawing-board {
+        border: 4px inset rgb(0, 3, 3);
+        width: 100vw;
+        height: 100vh;
+      }
+      #title {
+        font-family: "Gloria Hallelujah", cursive;
+        font-size: 1.5rem;
+        flex: 1;
+        text-align: center;
+        /* border: ridge 4px rgb(0, 60, 255); */
+        padding: 0;
+      }
+      #btn {
+        font-family: "Gloria Hallelujah", cursive;
+        margin-left: auto;
+        height: fit-content;
+        margin-right: 30px;
+        letter-spacing: 0.3rem;
+        border: 2px ridge rgb(255, 153, 0);
+        border-radius: 5px;
+        background: rgb(255, 115, 1);
+        color: rgb(255, 255, 255);
+      }
+    </style>
+    <div class="header">
+      <header id="title">Scribble On Me!</header>
+      <button id="btn" onclick="clearCanvas()">Clear</button>
+    </div>
+    <div class="drawing-board">
+      <canvas id="draw" width="800" height="800"></canvas>
+    </div>
+    <script>
+      const canvas = document.querySelector("#draw");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      ctx.strokeStyle = "black";
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.lineWidth = 100;
+
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+      let hue = 0;
+      let direction = true;
+
+      function draw(e) {
+        if (!isDrawing) return;
+        console.log(e);
+        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+        hue++;
+        if (hue >= 360) {
+          hue = 0;
+        }
+        if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+          direction = !direction;
+        }
+        if (direction === true) {
+          ctx.lineWidth++;
+        } else {
+          ctx.lineWidth--;
+        }
+      }
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mousedown", (e) => {
+        isDrawing = true;
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+      });
+
+      canvas.addEventListener("mouseup", () => (isDrawing = false));
+      canvas.addEventListener("mouseout", () => (isDrawing = false));
+    </script>
+  </body>
+</html>
